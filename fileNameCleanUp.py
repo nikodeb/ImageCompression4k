@@ -2,6 +2,8 @@ import os
 import re
 from pathlib import Path
 
+# This script is intended to clean the file names
+# to retain only the image index
 
 def rename_files(images_dir_str):
     images_dir = Path(images_dir_str)
