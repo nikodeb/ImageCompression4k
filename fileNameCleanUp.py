@@ -5,6 +5,7 @@ from pathlib import Path
 # This script is intended to clean the file names
 # to retain only the image index
 
+
 def rename_files(images_dir_str):
     images_dir = Path(images_dir_str)
     old_file_paths = [x for x in images_dir.iterdir() if x.is_file() and not str(x).endswith('.ini')]
@@ -28,4 +29,4 @@ def rename_file(old_file_path, new_file_path):
     os.rename(old_file_path, new_file_path)
 
 
-rename_files('Data/Samples/')
+rename_files('Data/samples/')
