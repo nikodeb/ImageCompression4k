@@ -39,7 +39,9 @@ class ImgComp4KDataset(AbstractDataset):
         coords = np.hstack((x_ind, y_ind))
 
         # create dataset
-        dataset = {'coords': coords,
-                   'rgb': rgb}
-
+        train = {'coords': coords,
+                 'rgb': rgb}
+        dataset = {'train': train,
+                   'val': None,
+                   'test': None}
         return dataset
