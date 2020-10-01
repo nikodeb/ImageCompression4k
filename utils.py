@@ -88,13 +88,6 @@ def setup_to_resume(args, model, optimizer):
     optimizer.load_state_dict(chk_dict[OPTIMIZER_STATE_DICT_KEY])
 
 
-def create_optimizer(model, args):
-    if args.optimizer == 'Adam':
-        return optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
-
-    return optim.SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum)
-
-
 class AverageMeterSet(object):
     def __init__(self, meters=None):
         self.meters = meters if meters else {}
