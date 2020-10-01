@@ -30,7 +30,7 @@ class AbstractDataset(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get_preprocessed_folder_path(self):
+    def _get_preprocessed_folder_path(self):
         pass
 
     def load_dataset(self):
@@ -64,5 +64,5 @@ class AbstractDataset(metaclass=ABCMeta):
         return root.joinpath('preprocessed')
 
     def _get_preprocessed_dataset_path(self):
-        folder = self.get_preprocessed_folder_path()
+        folder = self._get_preprocessed_folder_path()
         return folder.joinpath('dataset.pkl')

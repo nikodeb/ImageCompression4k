@@ -1,6 +1,7 @@
 from .base import BaseModel
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from utils import fix_random_seed_as
 
 
@@ -14,20 +15,25 @@ class SirenFC2DModel(BaseModel):
         super().__init__(args)
         fix_random_seed_as(args.model_init_seed)
 
+        self.fc_sin_layers = nn.ModuleList([
+                          nn.Linear(16, 256, bias=True),
+                          nn.Linear(256, 256, bias=True),
+                          nn.Linear(256, 256, bias=True),
+                          nn.Linear(256, 256, bias=True),
+                          nn.Linear(256, 256, bias=True)])
+
         self.layer1 = nn.Linear(2, 16, bias=True)
-        self.layer2 = nn.Linear(16, 256, bias=True)
-        self.layer3 = nn.Linear(256, 256, bias=True)
-        self.layer4 = nn.Linear(256, 16, bias=True)
-        self.layer5 = nn.Linear(16, 3, bias=True)
+        self.out = nn.Linear(256, 3, bias=True)
 
     @classmethod
     def code(cls):
         return 'sirenFC2D'
 
     def forward(self, x):
-        x = torch.sin(self.layer1(x))
-        x = torch.sin(self.layer3(x))
-        x = torch.sin(self.layer4(x))
-        x = torch.sin(self.layer2(x))
-        x = torch.exp(self.layer5(x))
+        x = F.gelu(self.layer1(x))
+        for i, layer in enumerate(self.fc_sin_layers):
+            x = layer(x)
+            # x = F.gelu(x)
+            x = torch.sin(x)
+        x = torch.exp(self.out(x))
         return x

@@ -43,6 +43,8 @@ class ImgComp4kDataloader(AbstractDataloader):
     def _get_eval_loader(self, mode):
         batch_size = self.args.val_batch_size if mode == 'val' else self.args.test_batch_size
         dataset = self._get_eval_dataset(mode)
+        if dataset is None:
+            return None
         dataloader = data_utils.DataLoader(dataset, batch_size=batch_size,
                                            shuffle=False, pin_memory=True, num_workers=0)
         return dataloader
@@ -73,7 +75,7 @@ class ImgComp4kTrainDataset(data_utils.Dataset):
         x = self.X_train[index]
         y = self.Y_train[index]
 
-        return torch.LongTensor(x), torch.LongTensor(y)
+        return torch.FloatTensor(x), torch.FloatTensor(y)
 
 
 class ImgComp4kEvalDataset(data_utils.Dataset):
@@ -90,4 +92,4 @@ class ImgComp4kEvalDataset(data_utils.Dataset):
         x = self.X_eval[index]
         y = self.Y_eval[index]
 
-        return torch.LongTensor(x), torch.LongTensor(y)
+        return torch.FloatTensor(x), torch.FloatTensor(y)

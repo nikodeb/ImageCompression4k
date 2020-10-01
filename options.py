@@ -7,7 +7,7 @@ from trainers import TRAINERS
 import argparse
 
 
-parser = argparse.ArgumentParser(description='RecPlay')
+parser = argparse.ArgumentParser(description='4kCompr')
 
 ################
 # Top Level
@@ -33,6 +33,8 @@ parser.add_argument('--eval_set_size', type=int, default=500,
 # Dataloader
 ################
 parser.add_argument('--dataloader_code', type=str, default='bert', choices=DATALOADERS.keys())
+parser.add_argument('--img_name', type=str, default='100', help='The name of the image to use for training')
+parser.add_argument('--dataloader_workers', type=int, default=0)
 parser.add_argument('--dataloader_random_seed', type=int, default=0.0)
 parser.add_argument('--train_batch_size', type=int, default=64)
 parser.add_argument('--val_batch_size', type=int, default=64)

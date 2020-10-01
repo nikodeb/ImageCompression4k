@@ -111,14 +111,14 @@ class HparamLogger(AbstractBaseLogger):
         self.hparams = args.hparams_to_log
         self.metrics = args.metrics_to_log
         self.metric_key = metric_key
-        self.best_metric = 0.
+        self.best_metric = 1e10
 
         self.best_metrics_dict = {metric: 0 for metric in self.metrics}
         self.hparams_dict = {hparam: self.args_dict[hparam] for hparam in self.hparams}
 
     def log(self, *args, **kwargs):
         current_metric = kwargs[self.metric_key]
-        if self.best_metric < current_metric:
+        if self.best_metric > current_metric:
             self.best_metric = current_metric
             for k in self.best_metrics_dict.keys():
                 if k in kwargs:

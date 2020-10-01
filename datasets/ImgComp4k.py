@@ -17,7 +17,7 @@ class ImgComp4KDataset(AbstractDataset):
     def url(cls):
         return ''
 
-    def get_preprocessed_folder_path(self):
+    def _get_preprocessed_folder_path(self):
         preprocessed_root = self._get_preprocessed_root_path()
         folder_name = '{}_{}'.format(self.code(), self.img_name)
         return preprocessed_root.joinpath(folder_name)

@@ -80,8 +80,6 @@ class AbstractTrainer(metaclass=ABCMeta):
 
     def train_one_epoch(self, epoch, accum_iter):
         self.model.train()
-        if self.args.enable_lr_schedule:
-            self.lr_scheduler.step()
 
         average_meter_set = AverageMeterSet()
 
@@ -106,7 +104,7 @@ class AbstractTrainer(metaclass=ABCMeta):
             accum_iter += batch_size
 
             if self._needs_to_log(accum_iter):
-                tqdm_dataloader.set_description('Logging to Tensorboard')
+                # tqdm_dataloader.set_description('Logging to Tensorboard')
                 log_data = {
                     'state_dict': (self._create_state_dict()),
                     'epoch': epoch + 1,
@@ -115,6 +113,9 @@ class AbstractTrainer(metaclass=ABCMeta):
                 log_data.update(average_meter_set.averages())
                 self.log_extra_train_info(log_data)
                 self.logger_service.log_train(log_data)
+
+        if self.args.enable_lr_schedule:
+            self.lr_scheduler.step()
 
         return accum_iter
 
@@ -240,7 +241,7 @@ class AbstractTrainer(metaclass=ABCMeta):
             return optim.lr_scheduler.LambdaLR(self.optimizer, lr_lambda, -1)
 
         elif self.args.lr_sched_type == 'cos':
-            return optim.lr_scheduler.CosineAnnealingLR(self.optimizer, self.args.num_epochs)
+            return optim.lr_scheduler.CosineAnnealingLR(self.optimizer, self.args.num_epochs, eta_min=0.0000001)
 
         elif self.args.lr_sched_type == 'step':
             return optim.lr_scheduler.StepLR(self.optimizer, step_size=self.args.decay_step, gamma=self.args.gamma)
@@ -253,8 +254,8 @@ class AbstractTrainer(metaclass=ABCMeta):
         train_loggers = [
             MetricGraphPrinter(writer, key='epoch', graph_name='Epoch', group_name='Train'),
             MetricGraphPrinter(writer, key='loss', graph_name='Loss', group_name='Train'),
-            BestModelLogger(writer, model_checkpoint, metric_key=self.best_metric),
-            HparamLogger(writer, args=self.args, metric_key=self.best_metric)
+            BestModelLogger(writer, model_checkpoint, metric_key='loss'),
+            HparamLogger(writer, args=self.args, metric_key='loss')
         ]
         val_loggers = []
         return writer, train_loggers, val_loggers
