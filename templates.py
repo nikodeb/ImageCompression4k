@@ -29,7 +29,7 @@ def set_template(args):
         args.device_idx = '0'
         args.optimizer = 'Adam'
         args.weight_decay = 0.00001
-        args.lr = 0.0001
+        args.lr = 0.0003
         args.enable_lr_schedule = True
         args.lr_sched_type = 'cos'
         args.num_warmup_steps = 20
