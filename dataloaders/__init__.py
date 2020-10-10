@@ -1,9 +1,9 @@
 from datasets import dataset_factory
-from .ImgComp4k import ImgComp4kDataloader
+from .ImgRepr import ImgRepr4kDataloader
 
 
 DATALOADERS = {
-    ImgComp4kDataloader.code(): ImgComp4kDataloader
+    ImgRepr4kDataloader.code(): ImgRepr4kDataloader
 }
 
 

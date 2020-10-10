@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 
-class ImgComp4KDataset(AbstractDataset):
+class ImgRepr4KDataset(AbstractDataset):
     def __init__(self, args):
         super().__init__(args)
         self.args = args
@@ -85,11 +85,12 @@ class ImgComp4KDataset(AbstractDataset):
             y_ind = np.reshape(y_ind, (-1, 1))
             coords = np.hstack((x_ind, y_ind))
         elif self.normalise_coords == 'negpos1':
-            height = [torch.linspace(-1, 1, steps=self.img_resize_height)]
-            width = [torch.linspace(-1, 1, steps=self.img_resize_width)]
-            tensors = tuple([height, width])
+            height = torch.linspace(-1, 1, steps=self.img_resize_height)
+            width = torch.linspace(-1, 1, steps=self.img_resize_width)
+            tensors = ([height, width])
             coords = torch.stack(torch.meshgrid(*tensors), dim=-1)
             coords = coords.reshape(-1, 2)
+            coords = coords.numpy()
         else:
             raise NotImplementedError('Value of normalise_coords is not supported: {}'.format(self.normalise_coords))
         return coords

@@ -1,7 +1,7 @@
-from .ImgComp4k import ImgComp4KDataset
+from .ImgRepr import ImgRepr4KDataset
 
 DATASETS = {
-    ImgComp4KDataset.code(): ImgComp4KDataset
+    ImgRepr4KDataset.code(): ImgRepr4KDataset
 }
 
 

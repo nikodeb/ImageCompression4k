@@ -28,6 +28,9 @@ parser.add_argument('--split', type=str, default='leave_one_out', help='How to s
 parser.add_argument('--dataset_split_seed', type=int, default=98765)
 parser.add_argument('--eval_set_size', type=int, default=500, 
                     help='Size of val and test set. 500 for ML-1m and 10000 for ML-20m recommended')
+parser.add_argument('--img_resize_height', type=int, default=216)
+parser.add_argument('--img_resize_width', type=int, default=318)
+parser.add_argument('--normalise_coords', type=str, default='none')
 
 ################
 # Dataloader
@@ -39,6 +42,7 @@ parser.add_argument('--dataloader_random_seed', type=int, default=0.0)
 parser.add_argument('--train_batch_size', type=int, default=64)
 parser.add_argument('--val_batch_size', type=int, default=64)
 parser.add_argument('--test_batch_size', type=int, default=64)
+parser.add_argument('--load_full_img', type=str, default='F')
 
 
 ################

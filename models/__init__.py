@@ -1,7 +1,9 @@
 from .sirenFC2D import SirenFC2DModel
+from .siren import Siren
 
 MODELS = {
     SirenFC2DModel.code(): SirenFC2DModel,
+    Siren.code(): Siren,
 }
 
 

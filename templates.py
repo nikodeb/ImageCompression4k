@@ -9,15 +9,19 @@ def set_template(args):
 
         args.save_models_to_disk = 'True'
         args.dataloader_code = 'samples'
-        args.img_name = '100'
+        args.img_name = '1001'
+        args.img_resize_height = 216
+        args.img_resize_width = 318
+        args.normalise_coords = 'negpos1'
 
-        batch = 10000
+        batch = 1
         seed = 25
 
         args.log_period_as_iter = 1
 
         args.dataloader_random_seed = seed
-        args.dataloader_workers = 8
+        args.dataloader_workers = 0
+        args.load_full_img = 'T'
         args.train_batch_size = batch
         args.val_batch_size = batch
         args.test_batch_size = batch
@@ -28,18 +32,18 @@ def set_template(args):
         args.num_gpu = 1
         args.device_idx = '0'
         args.optimizer = 'Adam'
-        args.weight_decay = 0.00001
-        args.lr = 0.0003
-        args.enable_lr_schedule = True
+        args.weight_decay = 0
+        args.lr = 0.0001
+        args.enable_lr_schedule = False
         args.lr_sched_type = 'cos'
         args.num_warmup_steps = 20
         args.decay_step = 25
         args.gamma = 1.0
-        args.num_epochs = 200
+        args.num_epochs = 1000
         args.metric_ks = [1, 5, 10, 20, 50, 100]
         args.best_metric = 'loss'
 
-        args.model_code = 'sirenFC2D'
+        args.model_code = 'siren'
         args.model_init_seed = seed
 
         args.dropout = 0.1

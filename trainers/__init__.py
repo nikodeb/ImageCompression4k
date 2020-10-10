@@ -1,8 +1,8 @@
-from .ImgComp4k import ImgComp4kTrainer
+from .ImgRepr import ImgReprTrainer
 
 
 TRAINERS = {
-    ImgComp4kTrainer.code(): ImgComp4kTrainer,
+    ImgReprTrainer.code(): ImgReprTrainer,
 }
 
 
