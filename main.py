@@ -53,7 +53,7 @@ def setup_model_args(args_in, lr):
 
     model_args.hparams_to_log = ['model_init_seed', 'weight_decay', 'lr', 'num_epochs', 'model_code']
     model_args.metrics_to_log = ['loss']
-    model_args.experiment_dir = 'experiments/siren_256_256_0hid'
+    model_args.experiment_dir = 'experiments/siren_64_64_0hid'
     model_args.experiment_description = '{}'.format(model_args.lr)
     return model_args
 
@@ -68,7 +68,7 @@ def train(args_in):
 
 if __name__ == '__main__':
     # lrs = [1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
-    lrs = [5e-3, 1e-2, 5e-2, 1e-1, 5e-1]
+    lrs = [1e-3, 5e-4, 1e-4, 5e-5, 1e-5, 5e-3, 1e-2, 5e-2, 1e-1, 5e-1]
     for lr in lrs:
         model_args = setup_model_args(args, lr=lr)
         if args.mode == 'train' or args.mode == 'test':
