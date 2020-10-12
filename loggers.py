@@ -69,7 +69,7 @@ class BestModelLogger(AbstractBaseLogger):
             os.mkdir(self.checkpoint_path)
 
         self.best_state_dict = None
-        self.best_metric = 0.
+        self.best_metric = 1e10
         self.metric_key = metric_key
         self.filename = filename
 
@@ -77,7 +77,7 @@ class BestModelLogger(AbstractBaseLogger):
 
     def log(self, *args, **kwargs):
         current_metric = kwargs[self.metric_key]
-        if self.best_metric < current_metric:
+        if self.best_metric > current_metric:
             print("Update Best {} Model at {}".format(self.metric_key, kwargs['epoch']))
             self.best_metric = current_metric
             self.best_state_dict = kwargs['state_dict']
@@ -125,5 +125,6 @@ class HparamLogger(AbstractBaseLogger):
                     self.best_metrics_dict[k] = kwargs[k]
 
     def complete(self, *args, **kwargs):
+        self.hparams_dict['params'] = '{}'.format(kwargs['num_params'])
         post_processed_dict = {key.replace('@','_'): value for key, value in self.best_metrics_dict.items()}
         self.writer.add_hparams(hparam_dict=self.hparams_dict, metric_dict=post_processed_dict)

@@ -42,6 +42,12 @@ class AbstractTrainer(metaclass=ABCMeta):
         self.logger_service = LoggerService(self.train_loggers, self.val_loggers, tensorboard_writer=self.writer)
         self.log_period_as_iter = args.log_period_as_iter
 
+        self.total_num_params = 0
+        for param in self.model.parameters():
+            self.total_num_params += np.prod(param.shape)
+        self.total_num_params = self.total_num_params.item()
+
+
     @abstractmethod
     def add_extra_loggers(self):
         pass
@@ -68,6 +74,7 @@ class AbstractTrainer(metaclass=ABCMeta):
         pass
 
     def train(self):
+        print('Parameter count: {}'.format(self.total_num_params))
         accum_iter = 0
         self.validate(0, accum_iter)
         for epoch in range(self.num_epochs):
@@ -75,6 +82,7 @@ class AbstractTrainer(metaclass=ABCMeta):
             self.validate(epoch, accum_iter)
         self.logger_service.complete({
             'state_dict': (self._create_state_dict()),
+            'num_params': self.total_num_params,
         })
         self.writer.close()
 
@@ -99,7 +107,7 @@ class AbstractTrainer(metaclass=ABCMeta):
 
             average_meter_set.update('loss', loss.item())
             tqdm_dataloader.set_description(
-                'Epoch {}, loss {:.6f} '.format(epoch + 1, average_meter_set['loss'].avg))
+                'Epoch {}, loss {:.8f} '.format(epoch + 1, average_meter_set['loss'].avg))
 
             accum_iter += batch_size
 
