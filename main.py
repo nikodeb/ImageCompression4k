@@ -4,7 +4,7 @@ from dataloaders import dataloader_factory
 from trainers import trainer_factory
 from utils import *
 
-def setup_model_args(args_in, lr):
+def setup_model_args(args_in, lr, seed):
     model_args = args_in
     args.mode = 'train'
 
@@ -13,12 +13,12 @@ def setup_model_args(args_in, lr):
     model_args.save_models_to_disk = 'True'
     model_args.dataloader_code = 'samples'
     model_args.img_name = '1001'
-    model_args.img_resize_height = 216
-    model_args.img_resize_width = 318
+    model_args.img_resize_height = 288
+    model_args.img_resize_width = 512
     model_args.normalise_coords = 'negpos1'
 
     batch = 1
-    seed = 25
+    seed = seed
 
     args.log_period_as_iter = 1
 
@@ -53,8 +53,8 @@ def setup_model_args(args_in, lr):
 
     model_args.hparams_to_log = ['model_init_seed', 'weight_decay', 'lr', 'num_epochs', 'model_code']
     model_args.metrics_to_log = ['loss']
-    model_args.experiment_dir = 'experiments/siren_64_64_0hid'
-    model_args.experiment_description = '{}'.format(model_args.lr)
+    model_args.experiment_dir = 'experiments/288x512/siren_256_256_1hid'
+    model_args.experiment_description = '{}_{}'.format(seed, model_args.lr)
     return model_args
 
 def train(args_in):
@@ -69,9 +69,11 @@ def train(args_in):
 if __name__ == '__main__':
     # lrs = [1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
     lrs = [1e-3, 5e-4, 1e-4, 5e-5, 1e-5, 5e-3, 1e-2, 5e-2, 1e-1, 5e-1]
+    seeds = [5, 10, 15, 20, 25]
     for lr in lrs:
-        model_args = setup_model_args(args, lr=lr)
-        if args.mode == 'train' or args.mode == 'test':
-            train(model_args)
-        else:
-            raise ValueError('Invalid mode')
+        for seed in seeds:
+            model_args = setup_model_args(args, lr=lr, seed=seed)
+            if args.mode == 'train' or args.mode == 'test':
+                train(model_args)
+            else:
+                raise ValueError('Invalid mode')

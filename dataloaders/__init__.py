@@ -1,9 +1,11 @@
 from datasets import dataset_factory
 from .ImgRepr import ImgRepr4kDataloader
+from.ImgReprRecurrent import ImgRepr4kRecDataloader
 
 
 DATALOADERS = {
-    ImgRepr4kDataloader.code(): ImgRepr4kDataloader
+    ImgRepr4kDataloader.code(): ImgRepr4kDataloader,
+    ImgRepr4kRecDataloader.code(): ImgRepr4kRecDataloader
 }
 
 
