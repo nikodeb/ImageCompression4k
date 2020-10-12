@@ -47,7 +47,7 @@ class Siren(BaseModel):
 
         in_features = 2
         hidden_features = 256
-        hidden_layers = 5
+        hidden_layers = 0
         out_features = 3
         outermost_linear = True
         first_omega_0 = 30

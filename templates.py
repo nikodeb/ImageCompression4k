@@ -39,7 +39,7 @@ def set_template(args):
         args.num_warmup_steps = 20
         args.decay_step = 25
         args.gamma = 1.0
-        args.num_epochs = 1000
+        args.num_epochs = 500
         args.metric_ks = [1, 5, 10, 20, 50, 100]
         args.best_metric = 'loss'
 
