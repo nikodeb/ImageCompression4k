@@ -14,6 +14,7 @@ class ImgRepr4kDataloader(AbstractDataloader):
         super().__init__(args, dataset)
 
         self.load_full_img = True if args.load_full_img == 'T' else False
+        self.args.trans_info = self.dataset['transform_info']
 
     @classmethod
     def code(cls):

@@ -35,7 +35,7 @@ class ImgRepr4KDataset(AbstractDataset):
         img = imageio.imread(raw_image_path)
         img = np.asarray(img)
 
-        # preprocess image and convert to an array of rgb values
+        # preprocess image and convert to an array of normalised [0..1] rgb values
         img, transf_info = self.transform_image(image=img)
         rgb = np.reshape(img, (-1, 3))
 
