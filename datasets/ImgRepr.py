@@ -1,6 +1,5 @@
 from .base import AbstractDataset
 import imageio
-from PIL import Image
 from torchvision.transforms import Resize, Compose, ToTensor, Normalize, ToPILImage
 import numpy as np
 import torch
@@ -55,27 +54,19 @@ class ImgRepr4KDataset(AbstractDataset):
         return dataset
 
     def transform_image(self, image):
-        # change dims (H,W,C) -> (C,H,W)
-        img = np.moveaxis(image, -1, 0)
-
-        # find mean and std per channel
-        channel_means = [np.mean(img[d]) for d in range(img.shape[0])]
-        channel_stds = [np.std(img[d]) for d in range(img.shape[0])]
-
         transform = Compose([
             ToPILImage(),
-            Resize((self.img_resize_height, self.img_resize_width)),
-            ToTensor(),
-            Normalize(torch.Tensor(channel_means), torch.Tensor(channel_stds))
+            Resize((self.img_resize_height, self.img_resize_width)),  # resize image
+            ToTensor()  # convert from [0..255](HxWxC) -> [0..1](CxHxW)
         ])
-        img = transform(img)
-
-        # change dims (C,H,W) -> (H,W,C)
-        img = img.numpy()
-        img = np.moveaxis(img, 0, -1)
+        img = transform(image)
+        channel_means = img.view(3, -1).mean(dim=1)
+        channel_stds = img.view(3, -1).std(dim=1)
+        # normalise each rgb channel to zero mean and unit var
+        img = Normalize(mean=channel_means, std=channel_stds, inplace=False)(img)
 
         other_info = {'means': channel_means,
-                     'stds': channel_stds}
+                      'stds': channel_stds}
         return img, other_info
 
     def generate_coords(self, image):
