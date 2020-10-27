@@ -15,6 +15,8 @@ import json
 from abc import *
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+
 
 class AbstractTrainer(metaclass=ABCMeta):
     def __init__(self, args, model, train_loader, val_loader, test_loader, export_root):
@@ -41,6 +43,7 @@ class AbstractTrainer(metaclass=ABCMeta):
         self.add_extra_loggers()
         self.logger_service = LoggerService(self.train_loggers, self.val_loggers, tensorboard_writer=self.writer)
         self.log_period_as_iter = args.log_period_as_iter
+        self.log_period_as_epoch = 10
 
         self.total_num_params = 0
         for param in self.model.parameters():
@@ -93,17 +96,21 @@ class AbstractTrainer(metaclass=ABCMeta):
 
         #TODO: Investigate this line if issues with multi worker loaders
         tqdm_dataloader = tqdm(self.train_loader)
-
+        all_preds = []
+        all_targs = []
         for batch_idx, batch in enumerate(tqdm_dataloader):
             batch_size = batch[0].size(0)
+            all_targs.append(np.squeeze(batch[1], axis=0))
             batch = [x.to(self.device) for x in batch]
 
             self.optimizer.zero_grad()
 
-            loss = self.calculate_loss(batch)
+            loss, preds = self.calculate_loss(batch)
             loss.backward()
 
             self.optimizer.step()
+
+            all_preds.append(np.squeeze(preds, axis=0))
 
             average_meter_set.update('loss', loss.item())
             tqdm_dataloader.set_description(
@@ -121,6 +128,19 @@ class AbstractTrainer(metaclass=ABCMeta):
             log_data.update(average_meter_set.averages())
             self.log_extra_train_info(log_data)
             self.logger_service.log_train(log_data)
+
+        if self._needs_to_log_image(epoch= epoch + 1):
+            all_preds = np.vstack(tuple(all_preds))
+            all_targs = np.vstack(tuple(all_targs))
+            means = self.args.trans_info['means'].numpy()
+            stds = self.args.trans_info['stds'].numpy()
+            orig = np.reshape(all_preds, (3, self.args.img_resize_height, self.args.img_resize_width))
+            pred_image = means[:, None, None] + (orig * stds[:, None, None])
+            pred_image = pred_image
+            pred_image = np.moveaxis(pred_image, 0, -1)
+            plt.imshow(pred_image)
+            plt.savefig('{}.png'.format(accum_iter))
+            # plt.show()
 
         if self.args.enable_lr_schedule:
             self.lr_scheduler.step()
@@ -276,3 +296,8 @@ class AbstractTrainer(metaclass=ABCMeta):
 
     def _needs_to_log(self, accum_iter):
         return accum_iter % self.log_period_as_iter < self.args.train_batch_size and accum_iter != 0
+
+    def _needs_to_log_image(self, epoch):
+        if epoch <= 1:
+            return True
+        return epoch % self.log_period_as_epoch == 0

@@ -27,7 +27,7 @@ class ImgReprTrainer(AbstractTrainer):
         coords, rgb_labels = batch
         rgb_preds = self.model(coords)
         final_loss = self.mse(rgb_preds, rgb_labels)
-        return final_loss
+        return final_loss, rgb_preds.detach().cpu().numpy()
 
     def calculate_metrics(self, batch):
         #TODO: loss might need to be calculated on cpu instead of gpu - benchmark it
