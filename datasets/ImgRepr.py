@@ -4,6 +4,7 @@ from torchvision.transforms import Resize, Compose, ToTensor, Normalize, ToPILIm
 import numpy as np
 import torch
 
+import matplotlib.pyplot as plt
 
 class ImgRepr4KDataset(AbstractDataset):
     def __init__(self, args):
@@ -39,6 +40,15 @@ class ImgRepr4KDataset(AbstractDataset):
         img, transf_info = self.transform_image(image=img)
         rgb = np.reshape(img, (-1, 3))
 
+        # orig = np.reshape(rgb, (3, 288, 512))
+        # means = transf_info['means']
+        # std = transf_info['stds']
+        # orig = means[:, None, None] + (orig * std[:, None, None])
+        # orig = orig.numpy()
+        # orig = np.moveaxis(orig, 0, -1)
+        # plt.imshow(orig)
+        # plt.show()
+
         # create an array of 2D coordinates
         coords = self.generate_coords(image=img)
 
@@ -65,8 +75,8 @@ class ImgRepr4KDataset(AbstractDataset):
         # normalise each rgb channel to zero mean and unit var
         img = Normalize(mean=channel_means, std=channel_stds, inplace=False)(img)
 
-        other_info = {'means': channel_means,
-                      'stds': channel_stds}
+        other_info = {'means': channel_means.numpy().tolist(),
+                      'stds': channel_stds.numpy().tolist()}
         return img, other_info
 
     def generate_coords(self, image):
