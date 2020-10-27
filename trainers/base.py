@@ -15,7 +15,6 @@ import json
 from abc import *
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 
 
 class AbstractTrainer(metaclass=ABCMeta):
@@ -138,7 +137,7 @@ class AbstractTrainer(metaclass=ABCMeta):
                 pred_image = means[:, None, None] + (orig * stds[:, None, None])
                 pred_image = pred_image
                 pred_image = np.moveaxis(pred_image, 0, -1)
-                self.writer.add_image(tag='original', img_tensor=pred_image, global_step=epoch, dataformats='HWC')
+                self.writer.add_image(tag='original', img_tensor=pred_image, global_step=epoch+1, dataformats='HWC')
 
             all_preds = np.vstack(tuple(all_preds))
             means = self.args.trans_info['means'].numpy()
@@ -147,10 +146,7 @@ class AbstractTrainer(metaclass=ABCMeta):
             pred_image = means[:, None, None] + (orig * stds[:, None, None])
             pred_image = pred_image
             pred_image = np.moveaxis(pred_image, 0, -1)
-            # plt.imshow(pred_image)
-            # plt.savefig('{}.png'.format(accum_iter))
-            # plt.show()
-            self.writer.add_image(tag='prediction', img_tensor=pred_image, global_step=epoch, dataformats='HWC')
+            self.writer.add_image(tag='pred_{}'.format(epoch), img_tensor=pred_image, global_step=epoch, dataformats='HWC')
 
         if self.args.enable_lr_schedule:
             self.lr_scheduler.step()
