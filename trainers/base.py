@@ -130,17 +130,27 @@ class AbstractTrainer(metaclass=ABCMeta):
             self.logger_service.log_train(log_data)
 
         if self._needs_to_log_image(epoch= epoch + 1):
+            if epoch == 0:
+                all_targs = np.vstack(tuple(all_targs))
+                means = self.args.trans_info['means'].numpy()
+                stds = self.args.trans_info['stds'].numpy()
+                orig = np.reshape(all_targs, (3, self.args.img_resize_height, self.args.img_resize_width))
+                pred_image = means[:, None, None] + (orig * stds[:, None, None])
+                pred_image = pred_image
+                pred_image = np.moveaxis(pred_image, 0, -1)
+                self.writer.add_image(tag='original', img_tensor=pred_image, global_step=epoch, dataformats='HWC')
+
             all_preds = np.vstack(tuple(all_preds))
-            all_targs = np.vstack(tuple(all_targs))
             means = self.args.trans_info['means'].numpy()
             stds = self.args.trans_info['stds'].numpy()
             orig = np.reshape(all_preds, (3, self.args.img_resize_height, self.args.img_resize_width))
             pred_image = means[:, None, None] + (orig * stds[:, None, None])
             pred_image = pred_image
             pred_image = np.moveaxis(pred_image, 0, -1)
-            plt.imshow(pred_image)
-            plt.savefig('{}.png'.format(accum_iter))
+            # plt.imshow(pred_image)
+            # plt.savefig('{}.png'.format(accum_iter))
             # plt.show()
+            self.writer.add_image(tag='prediction', img_tensor=pred_image, global_step=epoch, dataformats='HWC')
 
         if self.args.enable_lr_schedule:
             self.lr_scheduler.step()
