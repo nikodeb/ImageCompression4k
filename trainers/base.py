@@ -99,8 +99,9 @@ class AbstractTrainer(metaclass=ABCMeta):
         all_targs = []
         for batch_idx, batch in enumerate(tqdm_dataloader):
             batch_size = batch[0].size(0)
+
             all_targs.append(np.squeeze(batch[1], axis=0))
-            batch = [x.to(self.device) for x in batch]
+            batch = [torch.squeeze(x, 0).to(self.device) for x in batch]
 
             self.optimizer.zero_grad()
 
@@ -109,7 +110,7 @@ class AbstractTrainer(metaclass=ABCMeta):
 
             self.optimizer.step()
 
-            all_preds.append(np.squeeze(preds, axis=0))
+            all_preds.append(preds)
 
             average_meter_set.update('loss', loss.item())
             tqdm_dataloader.set_description(

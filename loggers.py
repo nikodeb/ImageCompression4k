@@ -112,6 +112,7 @@ class HparamLogger(AbstractBaseLogger):
         self.metrics = args.metrics_to_log
         self.metric_key = metric_key
         self.best_metric = 1e10
+        self.best_iter = 0
 
         self.best_metrics_dict = {metric: 0 for metric in self.metrics}
         self.hparams_dict = {hparam: self.args_dict[hparam] for hparam in self.hparams}
@@ -120,11 +121,13 @@ class HparamLogger(AbstractBaseLogger):
         current_metric = kwargs[self.metric_key]
         if self.best_metric > current_metric:
             self.best_metric = current_metric
+            self.best_iter = kwargs['accum_iter']
             for k in self.best_metrics_dict.keys():
                 if k in kwargs:
                     self.best_metrics_dict[k] = kwargs[k]
 
     def complete(self, *args, **kwargs):
         self.hparams_dict['params'] = '{}'.format(kwargs['num_params'])
+        self.hparams_dict['best_iter'] = '{}'.format(self.best_iter)
         post_processed_dict = {key.replace('@','_'): value for key, value in self.best_metrics_dict.items()}
         self.writer.add_hparams(hparam_dict=self.hparams_dict, metric_dict=post_processed_dict)
