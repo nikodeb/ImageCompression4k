@@ -46,12 +46,12 @@ class Siren(BaseModel):
         fix_random_seed_as(args.model_init_seed)
 
         in_features = 2
-        hidden_features = 256
-        hidden_layers = 3
+        hidden_features = 512
+        hidden_layers = 6
         out_features = 3
         outermost_linear = True
-        first_omega_0 = 30
-        hidden_omega_0 = 30.
+        first_omega_0 = args.siren_omega
+        hidden_omega_0 = args.siren_omega
 
         self.net = []
         self.net.append(SineLayer(in_features, hidden_features,

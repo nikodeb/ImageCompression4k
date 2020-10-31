@@ -79,6 +79,7 @@ parser.add_argument('--best_metric', type=str, default='NDCG@10', help='Metric f
 parser.add_argument('--model_code', type=str, default='bert', choices=MODELS.keys())
 parser.add_argument('--model_init_seed', type=int, default=None)
 parser.add_argument('--dropout', type=float, default=None, help='Dropout probability to use throughout the model')
+parser.add_argument('--siren_omega', type=float, default=None, help='Value for SIREN omega hyperparameter')
 ################
 # Experiment
 ################
