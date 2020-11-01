@@ -46,7 +46,7 @@ class Siren(BaseModel):
         fix_random_seed_as(args.model_init_seed)
 
         in_features = 2
-        hidden_features = 512
+        hidden_features = 256
         hidden_layers = 6
         out_features = 3
         outermost_linear = True

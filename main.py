@@ -55,7 +55,7 @@ def setup_model_args(args_in, lr, siren_omega, seed):
 
     model_args.hparams_to_log = ['model_init_seed', 'lr', 'num_epochs', 'model_code', 'siren_omega']
     model_args.metrics_to_log = ['loss']
-    model_args.experiment_dir = 'experiments/1001_256x256/siren_6hid_512'
+    model_args.experiment_dir = 'experiments/1001_256x256/siren_6hid_256'
     model_args.experiment_description = '{}_{}'.format(seed, model_args.lr)
     return model_args
 
